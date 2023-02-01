@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# asdf
+. "$ASDF_DIR/asdf.sh"
+# z
+[[ -r "/usr/share/z/z.sh" ]] && source /usr/share/z/z.sh
+# sdkman
+[[ -s "$SDKMAN_DIR/bin/sdkman-init.sh" ]] && source "$SDKMAN_DIR/bin/sdkman-init.sh"

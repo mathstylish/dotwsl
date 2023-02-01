@@ -1,0 +1,92 @@
+#!/bin/sh
+
+function zsh_add_file() {
+    [ -f "$ZDOTDIR/$1" ] && source "$ZDOTDIR/$1"
+}
+
+function zsh_add_plugin() {
+    PLUGIN_NAME=$(echo $1 | cut -d "/" -f 2)
+    if [ -d "$ZDOTDIR/plugins/$PLUGIN_NAME" ]; then
+        # For plugins
+        zsh_add_file "plugins/$PLUGIN_NAME/$PLUGIN_NAME.plugin.zsh" || \
+        zsh_add_file "plugins/$PLUGIN_NAME/$PLUGIN_NAME.zsh" || \
+	zsh_add_file "plugins/$PLUGIN_NAME/$PLUGIN_NAME.git" 
+    else
+        git clone "https://github.com/$1.git" "$ZDOTDIR/plugins/$PLUGIN_NAME"
+    fi
+}
+
+function start-docker() {
+  if [[ -x "$(command -v docker)" ]]; then
+    DOCKER_DISTRO="Arch"
+    DOCKER_DIR=/mnt/wsl/shared-docker
+    DOCKER_SOCK="$DOCKER_DIR/docker.sock"
+    export DOCKER_HOST="unix://$DOCKER_SOCK"
+    if [ ! -S "$DOCKER_SOCK" ]; then
+      mkdir -pm o=,ug=rwx "$DOCKER_DIR"
+      chgrp docker "$DOCKER_DIR"
+      /mnt/c/Windows/System32/wsl.exe -d $DOCKER_DISTRO sh -c "nohup sudo -b dockerd < /dev/null > $DOCKER_DIR/dockerd.log 2>&1"
+    fi
+  fi
+}
+
+function kill-docker() {
+  kill $(ps aux | grep docker) > /dev/null 2>&1
+}
+
+function cgu() { # change my ssh identity key if i need to push to other git account
+  ln -sf $HOME/.ssh/$1 $HOME/.ssh/current
+}
+
+function cpf () { # copy content to clipboard
+  cat $1 | clip.exe
+}
+
+function gc() {
+  PROTOCOL=$1
+  USER_REPO=$2
+  CLONEDIR=$3
+
+  if [[ -z "$PROTOCOL" ]]; then
+    echo "gc <protocol> <username/repo> <path (optional)>"
+  fi
+
+  if [ "$PROTOCOL" = "ssh" ]; then
+    git clone "git@github.com:$USER_REPO.git" $CLONEDIR
+  fi
+
+  if [ "$PROTOCOL" = "https" ]; then
+    git clone "https://github.com/$USER_REPO.git" $CLONEDIR
+  fi
+}
+
+## string useful
+function str2hex() {
+  (( $# < 1 )) && return 1
+
+	case "$1" in
+		"-x")
+			echo -n "$2" | hexdump -ve '/1 "%02x"' | sed 's/../\\x&/g'
+			echo
+			;;
+		"-0x")
+			echo -n "$2" | hexdump -ve '/1 "0x%02x "' | sed 's/\(.*\) /\1/'
+			echo
+			;;
+		"-c")
+			echo -n '{ '
+			echo -n "$2" | hexdump -ve '/1 "0x%02x, "' | sed 's/\(.*\), /\1/'
+			echo ' }'
+			;;
+        *)
+			echo -n "$1" | hexdump -ve '/1 "%02x "' | sed 's/\(.*\) /\1/'
+			echo
+			;;
+	esac}
+
+str2dec() {
+	(( $# < 1 )) && return 1
+
+	echo -n "$1" | hexdump -ve '/1 "%d "' | sed 's/\(.*\) /\1/'
+	echo
+}
