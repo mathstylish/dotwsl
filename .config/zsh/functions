@@ -63,24 +63,26 @@ function stop-docker() {
     read -r opt
     if [[ $opt == "y" ]]; then
       kill $(ps aux | grep docker) > /dev/null 2>&1
+      echo "Docker stopped successfully"
       return 0
+      echo "Operation cancelled"
     else
       return 0
     fi
-  else
-    echo "Running containers: [$containers]"
   fi
+
+  echo "Running containers: [$containers]"
 
   while true; do
     echo "What do you want to do?"
     echo -n "(1) Stop and remove all containers\n(2) Stop all containers\n(3) Remove all containers\n(4) Stop and remove all containers and stop dockerd\n(5) Exit\noption: "
     read -r opt
     case $opt in
-      [1]* ) docker ps -aq | xargs docker stop | xargs docker rm; break;;
-      [2]* ) docker ps -aq | xargs docker stop; break;;
-      [3]* ) docker ps -aq | xargs docker rm; break;;
-      [4]* ) docker ps -aq | xargs docker stop | xargs docker rm && kill $(ps aux | grep docker) > /dev/null 2>&1; break;;
-      [5]* ) break;;
+      [1]* ) docker ps -aq | xargs docker stop | xargs docker rm; echo "Success"; break;;
+      [2]* ) docker ps -aq | xargs docker stop; echo "Success"; break;;
+      [3]* ) docker ps -aq | xargs docker rm; echo "Success"; break;;
+      [4]* ) docker ps -aq | xargs docker stop | xargs docker rm && kill $(ps aux | grep docker) > /dev/null 2>&1; echo "Success"; return 0;;
+      [5]* ) echo "Operation cancelled";break;;
       * ) echo "Please, choose one or press ctrl+c to exit"
     esac
   done
