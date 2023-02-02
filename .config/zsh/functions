@@ -48,11 +48,9 @@ function stop-docker() {
     return 1
   fi
 
-  if [[ -x "$(command -v docker)" ]]; then
-    if [[ ! $(docker ps 2> /dev/null) ]]; then
-      echo "Docker is already stopped"
-      return 1
-    fi
+  if [[ ! $(docker ps 2> /dev/null) ]]; then
+    echo "Docker is already stopped"
+    return 1
   fi
 
   containers=($(docker ps -aq | xargs))
