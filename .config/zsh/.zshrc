@@ -18,5 +18,4 @@ zsh_add_file "prompt"
 zsh_add_file "compinit"
 
 #THIS MUST BE AT THE END OF THE FILE FOR SDKMAN TO WORK!!!
-export SDKMAN_DIR="/home/stylish/.local/share/sdkman"
 [[ -s "/home/stylish/.local/share/sdkman/bin/sdkman-init.sh" ]] && source "/home/stylish/.local/share/sdkman/bin/sdkman-init.sh"

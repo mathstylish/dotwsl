@@ -10,7 +10,7 @@ elif [[ -x "$(command -v nvim)" ]]; then
 fi
 
 # sudo not required for some system commands
-for command in mount umount pacman updatedb su ; do
+for command in mount umount pacman updatedb su systemctl; do
   alias $command="sudo $command"
 done; unset command
 
@@ -32,7 +32,7 @@ alias zre='source $ZDOTDIR/.zshrc'                                  # source .zs
 alias led='vim $XDG_CONFIG_HOME/lvim/config.lua'
 alias ted='vim $XDG_CONFIG_HOME/tmux/tmux.conf'
 alias pip='python -m pip'                                           # install python modules correctly
-alias wget='wget --hsts-file="$XDG_CACHE_HOME/wget-hsts"'           # XDG BASE DIRECTORY wget
+#alias wget='wget --hsts-file="$XDG_CACHE_HOME/wget-hsts"'           # XDG BASE DIRECTORY wget
 alias clear="printf '\033[2J\033[3J\033[1;1H'"                      # clear with no scrollback
 alias locate='plocate --ignore-case'
 alias lg='lazygit'
